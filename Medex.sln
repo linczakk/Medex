@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30804.86
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Medex", "Medex\Medex.csproj", "{853128A9-684A-42BA-9890-040352AD8A41}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Medex.Core", "Medex.Core\Medex.Core.csproj", "{CFAC4B11-D8A2-479E-B30B-16092789645C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Medex.Database", "Medex.Database\Medex.Database.csproj", "{00F2C1C3-19D7-4F8F-AF0E-E231D83F3376}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{853128A9-684A-42BA-9890-040352AD8A41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{853128A9-684A-42BA-9890-040352AD8A41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{853128A9-684A-42BA-9890-040352AD8A41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{853128A9-684A-42BA-9890-040352AD8A41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFAC4B11-D8A2-479E-B30B-16092789645C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFAC4B11-D8A2-479E-B30B-16092789645C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFAC4B11-D8A2-479E-B30B-16092789645C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFAC4B11-D8A2-479E-B30B-16092789645C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00F2C1C3-19D7-4F8F-AF0E-E231D83F3376}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00F2C1C3-19D7-4F8F-AF0E-E231D83F3376}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00F2C1C3-19D7-4F8F-AF0E-E231D83F3376}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00F2C1C3-19D7-4F8F-AF0E-E231D83F3376}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BA542BA8-E63D-45FB-AE38-EE62BD88B262}
+	EndGlobalSection
+EndGlobal
