@@ -9,138 +9,43 @@ namespace Medex.Controllers
 {
     public class HomeController : Controller
     {
-        public List<DoctorViewModel> Doctors => new List<DoctorViewModel>
-        {
-            new DoctorViewModel
-            {
-                Name = "Patryk",
-                Prescriptions = new List<PrescriptionViewModel>
-                {
-                    new PrescriptionViewModel
-                    {
-                        Name = "Recepta 1",
-                        Medicines = new List<MedicineViewModel>
-                        {
-                            new MedicineViewModel
-                            {
-                                Name = "Magnez"
-                            },
-                            new MedicineViewModel
-                            {
-                                Name = "Marsjanki"
-                            }
-                        }
-                    },
-                    new PrescriptionViewModel
-                    {
-                        Name = "Recepta 2",
-                        Medicines = new List<MedicineViewModel>
-                        {
-                            new MedicineViewModel
-                            {
-                                Name = "Strepsils"
-                            },
-                            new MedicineViewModel
-                            {
-                                Name = "WD40"
-                            }
-                        }
-                    }
-                }
-            },
-            new DoctorViewModel
-            {
-                Name = "Kazimierz",
-                Prescriptions = new List<PrescriptionViewModel>
-                {
-                    new PrescriptionViewModel
-                    {
-                        Name = "Recepta 1",
-                        Medicines = new List<MedicineViewModel>
-                        {
-                            new MedicineViewModel
-                            {
-                                Name = "Magnez"
-                            },
-                            new MedicineViewModel
-                            {
-                                Name = "Marsjanki"
-                            }
-                        }
-                    },
-                    new PrescriptionViewModel
-                    {
-                        Name = "Recepta 2",
-                        Medicines = new List<MedicineViewModel>
-                        {
-                            new MedicineViewModel
-                            {
-                                Name = "Strepsils"
-                            },
-                            new MedicineViewModel
-                            {
-                                Name = "WD40"
-                            }
-                        }
-                    }
-                }
-            },
-            new DoctorViewModel
-            {
-                Name = "Zbigniew",
-                Prescriptions = new List<PrescriptionViewModel>
-                {
-                    new PrescriptionViewModel
-                    {
-                        Name = "Recepta 1",
-                        Medicines = new List<MedicineViewModel>
-                        {
-                            new MedicineViewModel
-                            {
-                                Name = "Magnez"
-                            },
-                            new MedicineViewModel
-                            {
-                                Name = "Marsjanki"
-                            }
-                        }
-                    },
-                    new PrescriptionViewModel
-                    {
-                        Name = "Recepta 2",
-                        Medicines = new List<MedicineViewModel>
-                        {
-                            new MedicineViewModel
-                            {
-                                Name = "Strepsils"
-                            },
-                            new MedicineViewModel
-                            {
-                                Name = "WD40"
-                            }
-                        }
-                    }
-                }
-            }
-        };
 
         public HomeController()
         {
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string filterString)
         {
-            return View(Doctors);
+            if(string.IsNullOrEmpty(filterString))
+            {
+                return View(TestDatabasePleaseDelete.Doctors);
+            }
+
+            return View(TestDatabasePleaseDelete.Doctors.Where(x => x.Name.Contains(filterString)).ToList());
+        }
+
+        public IActionResult Add()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Add(DoctorViewModel doctorVm)
+        {
+
+            TestDatabasePleaseDelete.Doctors.Add(doctorVm);
+
+            return RedirectToAction("Index");
         }
 
         public IActionResult View(int indexOfDoctor)
         {
-            return RedirectToAction("Index", "Prescription", Doctors[indexOfDoctor]);
+            return RedirectToAction("Index", "Prescription", new { indexOfDoctor = indexOfDoctor } );
         }
 
         public IActionResult Delete(int indexOfDoctor)
         {
-            return View(Doctors);
+            return View(TestDatabasePleaseDelete.Doctors);
         }
 
 

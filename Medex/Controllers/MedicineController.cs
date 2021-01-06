@@ -1,18 +1,52 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace Medex.Controllers
 {
     public class MedicineController : Controller
     {
 
+        private int IndexOfDoctor { get; set; }
+        private int IndexOfPrescription { get; set; }
+
         public MedicineController()
         {
         }
 
-        public IActionResult Index(PrescriptionViewModel prescriptionVm)
+        public IActionResult Index(int indexOfDoctor, int indexOfPrescription, string filterString)
         {
-            return View(prescriptionVm);
+            IndexOfDoctor = indexOfDoctor;
+            IndexOfPrescription = indexOfPrescription;
+
+            if (string.IsNullOrEmpty(filterString))
+            {
+                return View(TestDatabasePleaseDelete.Doctors.ElementAt(indexOfDoctor).Prescriptions.ElementAt(indexOfPrescription));
+            }
+
+            return View(new PrescriptionViewModel
+            {
+                Name = TestDatabasePleaseDelete.Doctors.ElementAt(indexOfDoctor).Prescriptions.ElementAt(indexOfPrescription).Name,
+                Medicines = TestDatabasePleaseDelete.Doctors.ElementAt(indexOfDoctor).Prescriptions.ElementAt(indexOfPrescription)
+                                .Medicines.Where(x => x.Name.Contains(filterString)).ToList()
+            });
         }
+
+        public IActionResult Add()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Add(MedicineViewModel medicineVm)
+        {
+
+            TestDatabasePleaseDelete.Doctors.ElementAt(IndexOfDoctor)
+                .Prescriptions.ElementAt(IndexOfPrescription)
+                .Medicines.Add(medicineVm);
+
+            return RedirectToAction("Index");
+        }
+
 
         public IActionResult Delete(int indexOfMedicine)
         {
