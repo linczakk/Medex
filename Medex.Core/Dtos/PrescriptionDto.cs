@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Medex
+namespace Medex.Core
 {
-    public class PrescriptionViewModel
+    public class PrescriptionDto
     {
         public int Id { get; set; }
 
         public string Name { get; set; }
 
         public DateTime CreatedDate { get; set; }
-        public DoctorViewModel Doctor { get; set; }
+        public DoctorDto Doctor { get; set; }
 
-        public IEnumerable<MedicineViewModel> Medicines { get; set; }
+        public IEnumerable<MedicineDto> Medicines { get; set; }
     }
 }

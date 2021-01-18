@@ -1,34 +1,34 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Medex.Core;
+using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 
 namespace Medex.Controllers
 {
     public class MedicineController : Controller
     {
+        private readonly IDoctorManager mDoctorManager;
+        private readonly ViewModelMapper mViewModelMapper;
 
-        private int IndexOfDoctor { get; set; }
-        private int IndexOfPrescription { get; set; }
-
-        public MedicineController()
+        public MedicineController(IDoctorManager doctorManager, ViewModelMapper viewModelMapper)
         {
+            mDoctorManager = doctorManager;
+            mViewModelMapper = viewModelMapper;
         }
 
-        public IActionResult Index(int indexOfDoctor, int indexOfPrescription, string filterString)
+        public IActionResult Index(int doctorId, int prescriptionId, string filterString)
         {
-            IndexOfDoctor = indexOfDoctor;
-            IndexOfPrescription = indexOfPrescription;
+            TempData["DoctorId"] = doctorId;
+            TempData["PrescriptionId"] = prescriptionId;
 
-            if (string.IsNullOrEmpty(filterString))
-            {
-                return View(TestDatabasePleaseDelete.Doctors.ElementAt(indexOfDoctor).Prescriptions.ElementAt(indexOfPrescription));
-            }
+            var prescriptionDtos = mDoctorManager.GetAllPrescriptionsForADoctor(doctorId, null)
+                                                 .FirstOrDefault(x => x.Id == prescriptionId);
+            
+            var medicineDtos = mDoctorManager.GetAllMedicineForAPrescription(prescriptionId, filterString);
 
-            return View(new PrescriptionViewModel
-            {
-                Name = TestDatabasePleaseDelete.Doctors.ElementAt(indexOfDoctor).Prescriptions.ElementAt(indexOfPrescription).Name,
-                Medicines = TestDatabasePleaseDelete.Doctors.ElementAt(indexOfDoctor).Prescriptions.ElementAt(indexOfPrescription)
-                                .Medicines.Where(x => x.Name.Contains(filterString)).ToList()
-            });
+            var prescriptionViewModels = mViewModelMapper.Map(prescriptionDtos);
+            prescriptionViewModels.Medicines = mViewModelMapper.Map(medicineDtos);
+
+            return View(prescriptionViewModels);
         }
 
         public IActionResult Add()
@@ -39,18 +39,19 @@ namespace Medex.Controllers
         [HttpPost]
         public IActionResult Add(MedicineViewModel medicineVm)
         {
+            var dto = mViewModelMapper.Map(medicineVm);
 
-            TestDatabasePleaseDelete.Doctors.ElementAt(IndexOfDoctor)
-                .Prescriptions.ElementAt(IndexOfPrescription)
-                .Medicines.Add(medicineVm);
+            mDoctorManager.AddNewMedicine(dto, int.Parse(TempData["PrescriptionId"].ToString()));
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { doctorId = int.Parse(TempData["DoctorId"].ToString()), prescriptionId = int.Parse(TempData["PrescriptionId"].ToString()) });
         }
 
 
-        public IActionResult Delete(int indexOfMedicine)
+        public IActionResult Delete(int medicineId)
         {
-            return View();
+            mDoctorManager.DeleteMedicine(new MedicineDto { Id = medicineId });
+
+            return RedirectToAction("Index", new { doctorId = int.Parse(TempData["DoctorId"].ToString()), prescriptionId = int.Parse(TempData["PrescriptionId"].ToString()) });
         }
 
     }

@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Medex
+namespace Medex.Database
 {
-    public class DoctorViewModel
+    public class Doctor : BaseEntity
     {
-        public int Id { get; set; }
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
@@ -14,7 +14,8 @@ namespace Medex
         public int WorkYears { get; set; }
 
         public bool IsAbleToMakePresciptions { get; set; }
-
-        public IEnumerable<PrescriptionViewModel> Prescriptions { get; set; }
+    
+        [NotMapped]
+        public virtual IEnumerable<Prescription> Prescriptions { get; set; }
     }
 }

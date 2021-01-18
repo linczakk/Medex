@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Medex
+namespace Medex.Core
 {
-    public class DoctorViewModel
+    public class DoctorDto
     {
         public int Id { get; set; }
         public string FirstName { get; set; }
@@ -15,6 +15,6 @@ namespace Medex
 
         public bool IsAbleToMakePresciptions { get; set; }
 
-        public IEnumerable<PrescriptionViewModel> Prescriptions { get; set; }
+        public  IEnumerable<PrescriptionDto> Prescriptions { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Medex.Models;
+﻿using Medex.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -10,18 +10,22 @@ namespace Medex.Controllers
     public class HomeController : Controller
     {
 
-        public HomeController()
+        private readonly IDoctorManager mDoctorManager;
+        private readonly ViewModelMapper mViewModelMapper;
+
+        public HomeController(IDoctorManager doctorManager, ViewModelMapper viewModelMapper)
         {
+            mDoctorManager = doctorManager;
+            mViewModelMapper = viewModelMapper;
         }
 
         public IActionResult Index(string filterString)
         {
-            if(string.IsNullOrEmpty(filterString))
-            {
-                return View(TestDatabasePleaseDelete.Doctors);
-            }
+            var doctorDtos = mDoctorManager.GetAllDoctors(filterString);
+            var doctorViewModels = mViewModelMapper.Map(doctorDtos);
 
-            return View(TestDatabasePleaseDelete.Doctors.Where(x => x.Name.Contains(filterString)).ToList());
+            return View(doctorViewModels);
+
         }
 
         public IActionResult Add()
@@ -33,19 +37,27 @@ namespace Medex.Controllers
         public IActionResult Add(DoctorViewModel doctorVm)
         {
 
-            TestDatabasePleaseDelete.Doctors.Add(doctorVm);
+            var dto = mViewModelMapper.Map(doctorVm);
+
+            mDoctorManager.AddNewDoctor(dto);
 
             return RedirectToAction("Index");
         }
 
-        public IActionResult View(int indexOfDoctor)
+        public IActionResult View(int doctorId)
         {
-            return RedirectToAction("Index", "Prescription", new { indexOfDoctor = indexOfDoctor } );
+            return RedirectToAction("Index", "Prescription", new { doctorId = doctorId } );
         }
 
-        public IActionResult Delete(int indexOfDoctor)
+        public IActionResult Delete(int doctorId)
         {
-            return View(TestDatabasePleaseDelete.Doctors);
+            mDoctorManager.DeleteDoctor(new DoctorDto { Id = doctorId });
+
+            var doctorDtos = mDoctorManager.GetAllDoctors(null);
+
+            var doctorViewModels = mViewModelMapper.Map(doctorDtos);
+
+            return View("Index", doctorViewModels);
         }
 
 

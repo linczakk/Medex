@@ -1,6 +1,9 @@
+using Medex.Core;
+using Medex.Database;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -24,10 +27,21 @@ namespace Medex
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            services.AddDbContext<MedexAppDbContext>(options => 
+                options.UseSqlServer("Server=.; Database=medexDatabase;Trusted_Connection=True;"));
+
+            services.AddTransient<IDoctorRepository, DoctorRepository>();
+            services.AddTransient<IPrescriptionRepository, PrescriptionRepository>();
+            services.AddTransient<IMedicineRepository, MedicineRepository>();
+
+            services.AddTransient<DtoMapper>();
+            services.AddTransient<ViewModelMapper>();
+            services.AddTransient<IDoctorManager, DoctorManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -52,6 +66,8 @@ namespace Medex
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            serviceProvider.GetService<MedexAppDbContext>().Database.Migrate();
         }
     }
 }

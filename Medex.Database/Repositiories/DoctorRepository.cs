@@ -1,0 +1,25 @@
+﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Medex.Database
+{
+    public class DoctorRepository : BaseRepository<Doctor>, IDoctorRepository
+    {
+
+        protected override DbSet<Doctor> DbSet => mDbContext.Doctors;
+
+
+        public DoctorRepository(MedexAppDbContext dbContext) : base(dbContext)
+        {
+
+        }
+
+        public IEnumerable<Doctor> GetAllDoctors()
+        {
+            return DbSet/*.Include(x => x.Prescriptions).ThenInclude(x => x.Medicines)*/.Select(x => x);
+        }
+        
+
+    }
+}

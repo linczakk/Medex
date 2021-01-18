@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Medex.Core;
+using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 
 
@@ -6,27 +7,28 @@ namespace Medex.Controllers
 {
     public class PrescriptionController : Controller
     {
-        private int IndexOfDoctor { get; set; }
+        private readonly IDoctorManager mDoctorManager;
+        private readonly ViewModelMapper mViewModelMapper;
 
-        public PrescriptionController()
+        public PrescriptionController(IDoctorManager doctorManager, ViewModelMapper viewModelMapper)
         {
+            mDoctorManager = doctorManager;
+            mViewModelMapper = viewModelMapper;
         }
 
-        public IActionResult Index(int indexOfDoctor, string filterString)
+        public IActionResult Index(int doctorId, string filterString)
         {
-            IndexOfDoctor = indexOfDoctor;
+            TempData["DoctorId"] = doctorId;
 
-            if (string.IsNullOrEmpty(filterString))
-            {
-                return View(TestDatabasePleaseDelete.Doctors.ElementAt(indexOfDoctor));
-            }
+            var doctorDto = mDoctorManager.GetAllDoctors(null)
+                                                 .FirstOrDefault(x => x.Id == doctorId);
 
-            return View(new DoctorViewModel
-            {
-                Name = TestDatabasePleaseDelete.Doctors.ElementAt(indexOfDoctor).Name,
-                Prescriptions = TestDatabasePleaseDelete.Doctors.ElementAt(indexOfDoctor)
-                                .Prescriptions.Where(x=>x.Name.Contains(filterString)).ToList()
-            });
+            var prescriptionDtos = mDoctorManager.GetAllPrescriptionsForADoctor(doctorId, filterString);
+
+            var doctorViewModels = mViewModelMapper.Map(doctorDto);
+            doctorViewModels.Prescriptions = mViewModelMapper.Map(prescriptionDtos);
+
+            return View(doctorViewModels);
         }
 
 
@@ -38,22 +40,23 @@ namespace Medex.Controllers
         [HttpPost]
         public IActionResult Add(PrescriptionViewModel prescriptionVm)
         {
+            var dto = mViewModelMapper.Map(prescriptionVm);
 
-            TestDatabasePleaseDelete.Doctors.ElementAt(IndexOfDoctor)
-                .Prescriptions.Add(prescriptionVm);
+            mDoctorManager.AddNewPrescription(dto, int.Parse(TempData["DoctorId"].ToString()));
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { doctorId = int.Parse(TempData["DoctorId"].ToString())});
         }
 
 
-        public IActionResult View(int indexOfPrescription)
+        public IActionResult View(int prescriptionId)
         { 
-            return RedirectToAction( "Index", "Medicine", new { IndexOfDoctor = IndexOfDoctor, indexOfPrescription = indexOfPrescription});
+            return RedirectToAction( "Index", "Medicine", new { doctorId = int.Parse(TempData["DoctorId"].ToString()), prescriptionId = prescriptionId });
         }
 
-        public IActionResult Delete(int indexOfPrescription)
+        public IActionResult Delete(int prescriptionId)
         {
-            return View();
+            mDoctorManager.DeletePrescription(new PrescriptionDto { Id = prescriptionId });
+            return RedirectToAction("Index", new { doctorId = int.Parse(TempData["DoctorId"].ToString()) });
         }
     }
 }

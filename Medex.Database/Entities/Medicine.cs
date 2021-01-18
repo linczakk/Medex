@@ -1,10 +1,10 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Medex
-{ 
-    public class MedicineViewModel
+namespace Medex.Database
+{
+    public class Medicine : BaseEntity
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public string CompanyName { get; set; }
 
@@ -16,10 +16,11 @@ namespace Medex
 
         public int Amount { get; set; }
 
-        public decimal PriceInTotal { get; set; }
-
         public DateTime ExpirationDate { get; set; }
 
-        public PrescriptionViewModel Prescription { get; set; }
+        [ForeignKey("Prescription")]
+        public int PrescriptionId { get; set; }
+        public virtual Prescription Prescription { get; set; }
+        
     }
 }

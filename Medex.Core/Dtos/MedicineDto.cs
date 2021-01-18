@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Medex
-{ 
-    public class MedicineViewModel
+namespace Medex.Core
+{
+    public class MedicineDto
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -20,6 +20,6 @@ namespace Medex
 
         public DateTime ExpirationDate { get; set; }
 
-        public PrescriptionViewModel Prescription { get; set; }
+        public PrescriptionDto Prescription { get; set; }
     }
 }
